@@ -23,7 +23,7 @@ func TestAddCourse(t *testing.T) {
 	input := InputUseCase{
 		CategoryName:     "Golang",
 		CourseName:       "Golang Course",
-		CourseCategoryID: 1, // try changing to 2
+		CourseCategoryID: 1, // HERE: try changing to 2
 	}
 
 	ctx := context.Background()
