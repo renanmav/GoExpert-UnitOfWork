@@ -17,7 +17,7 @@ type CourseRepository struct {
 	Queries *db.Queries
 }
 
-func NewCourseRepository(dtb *sql.DB) CourseRepositoryInterface {
+func NewCourseRepository(dtb *sql.DB) *CourseRepository {
 	return &CourseRepository{
 		DB:      dtb,
 		Queries: db.New(dtb),

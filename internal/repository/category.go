@@ -17,7 +17,7 @@ type CategoryRepository struct {
 	Queries *db.Queries
 }
 
-func NewCategoryRepository(dtb *sql.DB) CategoryRepositoryInterface {
+func NewCategoryRepository(dtb *sql.DB) *CategoryRepository {
 	return &CategoryRepository{
 		DB:      dtb,
 		Queries: db.New(dtb),

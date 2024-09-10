@@ -6,11 +6,13 @@ import (
 	"testing"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/renanmav/GoExpert-UnitOfWork/internal/db"
 	"github.com/renanmav/GoExpert-UnitOfWork/internal/repository"
+	"github.com/renanmav/GoExpert-UnitOfWork/pkg/uow"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAddCourse(t *testing.T) {
+func TestAddCourseUow(t *testing.T) {
 	dtb, err := sql.Open("mysql", "root:root@tcp(localhost:3306)/courses?parseTime=true")
 	assert.NoError(t, err)
 
@@ -22,13 +24,25 @@ func TestAddCourse(t *testing.T) {
 
 	ctx := context.Background()
 
-	input := InputUseCase{
+	uow := uow.NewUow(dtb)
+	uow.Register("CategoryRepository", func(tx *sql.Tx) interface{} {
+		repo := repository.NewCategoryRepository(dtb)
+		repo.Queries = db.New(tx)
+		return repo
+	})
+	uow.Register("CourseRepository", func(tx *sql.Tx) interface{} {
+		repo := repository.NewCourseRepository(dtb)
+		repo.Queries = db.New(tx)
+		return repo
+	})
+
+	input := InputUseCaseUow{
 		CategoryName:     "Golang",
 		CourseName:       "Golang Course",
 		CourseCategoryID: 1, // HERE: try changing to 2
 	}
 
-	useCase := NewAddCourseUseCase(repository.NewCategoryRepository(dtb), repository.NewCourseRepository(dtb))
+	useCase := NewAddCourseUseCaseUow(uow)
 	err = useCase.Execute(ctx, input)
 	assert.NoError(t, err)
 }
